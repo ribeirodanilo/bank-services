@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+
+  configserver:
+    image: ribeirodanilo/config-server:latest
+    ports:
+      - "8071:8071"
+    networks:
+      - bankservices-network
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+
+  accounts:
+    image: ribeirodanilo/accounts:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - bankservices-network
+    depends_on:
+      - configserver
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+
+
+  loans:
+    image: ribeirodanilo/loans:latest
+    mem_limit: 700m
+    ports:
+      - "8090:8090"
+    networks:
+      - bankservices-network
+
+  cards:
+    image: ribeirodanilo/cards:latest
+    mem_limit: 700m
+    ports:
+      - "9000:9000"
+    networks:
+      - bankservices-network
+
+networks:
+  bankservices-network:
