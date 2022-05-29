@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
 
-  configserver:
+  config-server:
     image: ribeirodanilo/config-server:latest
     ports:
       - "8071:8071"
@@ -13,14 +13,14 @@ services:
         limits:
           memory: 700m
 
-  accounts:
-    image: ribeirodanilo/accounts:latest
+  eureka-server:
+    image: ribeirodanilo/eureka-server:latest
     ports:
-      - "8080:8080"
+      - "8070:8070"
     networks:
       - bankservices-network
     depends_on:
-      - configserver
+      - config-server
     deploy:
       resources:
         limits:
@@ -32,24 +32,53 @@ services:
         window: 120s
     environment:
       SPRING_PROFILES_ACTIVE: default
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
 
+  accounts:
+    image: ribeirodanilo/accounts:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - bankservices-network
+    depends_on:
+      - config-server
+      - eureka-server
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
 
-  loans:
-    image: ribeirodanilo/loans:latest
-    mem_limit: 700m
+  cards:
+    image: ribeirodanilo/cards:latest
     ports:
       - "8090:8090"
     networks:
       - bankservices-network
-
-  cards:
-    image: ribeirodanilo/cards:latest
-    mem_limit: 700m
-    ports:
-      - "9000:9000"
-    networks:
-      - bankservices-network
+    depends_on:
+      - config-server
+      - eureka-server
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
 
 networks:
   bankservices-network:

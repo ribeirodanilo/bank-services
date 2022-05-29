@@ -1,3 +1,9 @@
+# Configuring info endpoint
+info:
+  app:
+    name: Accounts Microservice
+    description: Eazy Bank Accounts Application
+    version: 1.0.0
 server:
   port: 8080
 spring:
@@ -23,8 +29,69 @@ spring:
   h2:
     console:
       enable: true
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
 management:
+  info:
+    env:
+      enabled: true
   endpoints:
     web:
       exposure:
         include: "*"
+  endpoint:
+    shutdown:
+      enabled: true
+endpoints:
+  shutdown:
+    enabled: true
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+    instances:
+      detailsForCustomerSupportApp:
+        #nao realizar novas requisicoes apos 5 erros
+        minimumNumberOfCalls: 5
+        #50% de testes
+        failureRateThreshold: 50
+        #apos 5 tentativas aguardar 30 segunda para fazer um novo testes
+        waitDurationInOpenState: 30000
+        # apos 30 seg tentar apenas 2 vezes
+        permittedNumberOfCallsInHalfOpenState: 2
+  retry:
+    configs:
+      default:
+        registerHealthIndicator: true
+    instances:
+      retryForCustomerDetails:
+        maxRetryAttempts: 3
+        waitDuration: 2000
+  ratelimiter:
+    configs:
+      default:
+        #habilita o ratelimiter no actuator
+        registerHealthIndicator: true
+    instances:
+      sayHello:
+        # 1 requisicao a cada 5 segundos
+        timeoutDuration: 5000
+        limitRefreshPeriod: 5000
+        limitForPeriod: 1
+  bulkhead:
+    configs:
+      default:
+        #habilita o bulkhead no actuator
+        registerHealthIndicator: true
+    instances:
+      ratingService:
+        maxConcurrentCalls: 10
+        maxWaitDuration: 10ms

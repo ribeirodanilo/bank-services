@@ -1,0 +1,19 @@
+server:
+  port: 8070
+spring:
+  application:
+    name: eureka-server
+  profiles:
+    active: prod
+  config:
+    import: optional:configserver:http://localhost:8071
+  cloud:
+    loadbalancer:
+      riboon:
+        enable: false
+# This is for CORS
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

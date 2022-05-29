@@ -11,6 +11,8 @@
     <modules>
         <module>accounts</module>
         <module>config-server</module>
+        <module>eureka-server</module>
+        <module>cards</module>
     </modules>
 
     <name>bankservices</name>
@@ -53,11 +55,11 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
     </dependencies>
 
