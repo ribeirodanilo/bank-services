@@ -72,9 +72,34 @@ services:
           memory: 700m
       restart_policy:
         condition: on-failure
-        delay: 5s
+        delay: 30s
         max_attempts: 3
         window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
+
+  gateway-server:
+    image: ribeirodanilo/gateway-server:latest
+    ports:
+      - "8072:8072"
+    networks:
+      - bankservices-network
+    depends_on:
+      - config-server
+      - eureka-server
+      - cards
+      - accounts
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+      restart_policy:
+        condition: on-failure
+        delay: 45s
+        max_attempts: 3
+        window: 180s
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
