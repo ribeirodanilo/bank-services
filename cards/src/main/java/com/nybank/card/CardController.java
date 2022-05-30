@@ -36,7 +36,8 @@ public class CardController {
     CardServiceConfig cardsConfig;
 
     @PostMapping("/myCards")
-    public List<Card> getCardDetails(@RequestBody Customer customer) {
+    public List<Card> getCardDetails(@RequestHeader("mybank-correlation-id") String correlationId,
+                                     @RequestBody Customer customer) {
         logger.info("getCardDetails() method started");
         List<Card> cards = cardsRepository.findByCustomerId(customer.getCustomerId());
         logger.info("getCardDetails() method ended");

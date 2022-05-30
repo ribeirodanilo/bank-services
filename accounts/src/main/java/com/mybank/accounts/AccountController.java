@@ -43,21 +43,22 @@ public class AccountController {
     }
 
     @PostMapping("/myCustomerDetails")
-    //@CircuitBreaker(name = "detailsForCustomerSupportApp", fallbackMethod = "myCustomerDetailsFallBack")
-    @Retry(name = "retryForCustomerDetails", fallbackMethod = "myCustomerDetailsFallBack")
-    public CustomerDetails myCustomerDetails(@RequestBody Customer customer) {
+    @CircuitBreaker(name = "detailsForCustomerSupportApp", fallbackMethod = "myCustomerDetailsFallBack")
+    //@Retry(name = "retryForCustomerDetails", fallbackMethod = "myCustomerDetailsFallBack")
+    public CustomerDetails myCustomerDetails(@RequestHeader("mybank-correlation-id") String correlationId,
+                                             @RequestBody Customer customer) {
 
         Account account = accountService.findByCustomerId(customer.getCustomerId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         String.format("Account not found for customerId {%s}" + customer.getCustomerId())));
 
-        List<Card> cards = cardsFeignClient.getCardDetails(customer);
+        List<Card> cards = cardsFeignClient.getCardDetails(correlationId, customer);
         CustomerDetails customerDetails = new CustomerDetails(account, cards);
         return customerDetails;
 
     }
 
-    public CustomerDetails myCustomerDetailsFallBack(Customer customer, Throwable t) {
+    public CustomerDetails myCustomerDetailsFallBack(String correlationId, Customer customer, Throwable t) {
         Account account = accountService.findByCustomerId(customer.getCustomerId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         String.format("Account not found for customerId {%s}" + customer.getCustomerId())));
