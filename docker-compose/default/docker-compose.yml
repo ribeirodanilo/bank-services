@@ -2,16 +2,32 @@ version: "3.8"
 
 services:
 
-  config-server:
-    image: ribeirodanilo/config-server:latest
+  zipkin:
+    image: openzipkin/zipkin
     ports:
-      - "8071:8071"
+      - "9411:9411"
     networks:
       - bankservices-network
     deploy:
       resources:
         limits:
           memory: 700m
+
+  config-server:
+    image: ribeirodanilo/config-server:latest
+    ports:
+      - "8071:8071"
+    networks:
+      - bankservices-network
+    depends_on:
+      - zipkin
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
 
   eureka-server:
     image: ribeirodanilo/eureka-server:latest
@@ -33,6 +49,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
 
   accounts:
     image: ribeirodanilo/accounts:latest
@@ -56,6 +73,7 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
 
   cards:
     image: ribeirodanilo/cards:latest
@@ -79,6 +97,7 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
 
   gateway-server:
     image: ribeirodanilo/gateway-server:latest
@@ -104,6 +123,7 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
 
 networks:
   bankservices-network:

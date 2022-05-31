@@ -12,6 +12,7 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/accounts")
 @AllArgsConstructor
+@Slf4j
 public class AccountController {
 
     private final AccountService accountService;
@@ -48,12 +50,14 @@ public class AccountController {
     public CustomerDetails myCustomerDetails(@RequestHeader("mybank-correlation-id") String correlationId,
                                              @RequestBody Customer customer) {
 
+        log.info("myCustomerDetails() method started");
         Account account = accountService.findByCustomerId(customer.getCustomerId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         String.format("Account not found for customerId {%s}" + customer.getCustomerId())));
 
         List<Card> cards = cardsFeignClient.getCardDetails(correlationId, customer);
         CustomerDetails customerDetails = new CustomerDetails(account, cards);
+        log.info("myCustomerDetails() method ended");
         return customerDetails;
 
     }
