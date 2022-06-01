@@ -11,6 +11,7 @@ import com.mybank.model.CustomerDetails;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
+import io.micrometer.core.annotation.Timed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,7 @@ public class AccountController {
     private final CardsFeignClient cardsFeignClient;
 
     @PostMapping("/myAccount")
+    @Timed(value = "getAccountDetails.time", description = "Time taken to return Account Details")
     public Account getAccountDetails(@RequestBody Customer customer) {
         return accountService.findByCustomerId(customer.getCustomerId()).orElse(null);
     }

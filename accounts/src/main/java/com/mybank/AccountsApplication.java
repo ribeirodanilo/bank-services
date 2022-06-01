@@ -4,6 +4,8 @@ import com.mybank.accounts.Account;
 import com.mybank.accounts.AccountService;
 import com.mybank.customer.Customer;
 import com.mybank.customer.CustomerService;
+import io.micrometer.core.aop.TimedAspect;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,6 +22,11 @@ public class AccountsApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(AccountsApplication.class, args);
+	}
+
+	@Bean
+	public TimedAspect timedAspect(MeterRegistry registry) {
+		return new TimedAspect(registry);
 	}
 
 	@Bean
