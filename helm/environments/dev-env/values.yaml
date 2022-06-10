@@ -1,0 +1,6 @@
+global:
+  configMapName: mybankdev-configmap
+  zipkinBaseURL: http://zipkin:9411/
+  activeProfile: dev
+  configServerURL: configserver:http://config-server:8071/
+  eurekaServerURL: http://eureka-server:8070/eureka/

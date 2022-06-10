@@ -25,3 +25,21 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+# Common backup files
+*.swp
+*.bak
+*.tmp
+*.orig
+*~
+
+# Various IDEs
+.project
+.idea/
+*.tmproj
+.vscode/
+
+# Helm
+**/Chart.lock
+**/.helmignore
+**/charts/**
