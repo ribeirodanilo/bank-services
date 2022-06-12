@@ -13,6 +13,21 @@ services:
         limits:
           memory: 700m
 
+  keycloak:
+    image: keycloak/keycloak:18.0.0
+    ports:
+      - "7080:8080"
+    networks:
+      - bankservices-network
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    command: start-dev
+
   config-server:
     image: ribeirodanilo/config-server:latest
     ports:
@@ -124,6 +139,7 @@ services:
       SPRING_CONFIG_IMPORT: configserver:http://config-server:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8070/eureka/
       SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: http://keycloak:8080/realms/master/protocol/openid-connect/certs
 
 networks:
   bankservices-network:
