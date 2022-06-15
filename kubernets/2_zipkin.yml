@@ -18,7 +18,7 @@ spec:
         - name: zipkin
           image: openzipkin/zipkin
           ports:
-            - containersPort: 9411
+            - containerPort: 9411
 ---
 apiVersion: v1
 kind: Service

@@ -7,3 +7,4 @@ data:
   SPRING_PROFILES_ACTIVE: prod
   SPRING_CONFIG_IMPORT: configserver:http://configserver-service:8071/
   EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver-service:8070/eureka/
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI: http://keycloak-service:7080/realms/master/protocol/openid-connect/certs

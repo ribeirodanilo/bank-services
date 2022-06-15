@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: cards
-          image: eazybytes/cards:latest
+          image: ribeirodanilo/cards:latest
           ports:
             - containerPort: 9000
           env:

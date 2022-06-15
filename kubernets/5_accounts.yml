@@ -5,7 +5,7 @@ metadata:
   labels:
     app: accounts
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: accounts
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: accounts
-          image: eazybytes/accounts:latest
+          image: ribeirodanilo/accounts:latest
           ports:
             - containerPort: 8080
           env:

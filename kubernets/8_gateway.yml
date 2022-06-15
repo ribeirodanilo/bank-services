@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gatewayserver
-          image: eazybytes/gatewayserver:latest
+          image: ribeirodanilo/gateway-server:latest
           ports:
             - containerPort: 8072
           env:
@@ -40,11 +40,16 @@ spec:
                 configMapKeyRef:
                   name: eazybank-configmap
                   key: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI
+              valueFrom:
+                configMapKeyRef:
+                  name: eazybank-configmap
+                  key: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK-SET-URI
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: gatewayserver
+  name: gatewayserver-service
 spec:
   selector:
     app: gatewayserver
